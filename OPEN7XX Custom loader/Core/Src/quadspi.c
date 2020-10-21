@@ -24,7 +24,7 @@
 
 static uint8_t QSPI_WriteEnable(void);
 static uint8_t QSPI_AutoPollingMemReady(void);
-static uint8_t QSPI_Configuration(void);
+//static uint8_t QSPI_Configuration(void);
 static uint8_t QSPI_ResetChip(void);
 
 /* USER CODE END 0 */
@@ -62,16 +62,16 @@ void HAL_QSPI_MspInit(QSPI_HandleTypeDef* qspiHandle)
   /* USER CODE END QUADSPI_MspInit 0 */
     /* QUADSPI clock enable */
     __HAL_RCC_QSPI_CLK_ENABLE();
-  
+
     __HAL_RCC_GPIOF_CLK_ENABLE();
     __HAL_RCC_GPIOB_CLK_ENABLE();
-    /**QUADSPI GPIO Configuration    
+    /**QUADSPI GPIO Configuration
     PF6     ------> QUADSPI_BK1_IO3
     PF7     ------> QUADSPI_BK1_IO2
     PF8     ------> QUADSPI_BK1_IO0
     PF9     ------> QUADSPI_BK1_IO1
     PB2     ------> QUADSPI_CLK
-    PB6     ------> QUADSPI_BK1_NCS 
+    PB6     ------> QUADSPI_BK1_NCS
     */
     GPIO_InitStruct.Pin = GPIO_PIN_6|GPIO_PIN_7;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
@@ -117,14 +117,14 @@ void HAL_QSPI_MspDeInit(QSPI_HandleTypeDef* qspiHandle)
   /* USER CODE END QUADSPI_MspDeInit 0 */
     /* Peripheral clock disable */
     __HAL_RCC_QSPI_CLK_DISABLE();
-  
-    /**QUADSPI GPIO Configuration    
+
+    /**QUADSPI GPIO Configuration
     PF6     ------> QUADSPI_BK1_IO3
     PF7     ------> QUADSPI_BK1_IO2
     PF8     ------> QUADSPI_BK1_IO0
     PF9     ------> QUADSPI_BK1_IO1
     PB2     ------> QUADSPI_CLK
-    PB6     ------> QUADSPI_BK1_NCS 
+    PB6     ------> QUADSPI_BK1_NCS
     */
     HAL_GPIO_DeInit(GPIOF, GPIO_PIN_6|GPIO_PIN_7|GPIO_PIN_8|GPIO_PIN_9);
 
@@ -134,13 +134,16 @@ void HAL_QSPI_MspDeInit(QSPI_HandleTypeDef* qspiHandle)
 
   /* USER CODE END QUADSPI_MspDeInit 1 */
   }
-} 
+}
 
 /* USER CODE BEGIN 1 */
 
 /* QUADSPI init function */
 uint8_t CSP_QUADSPI_Init(void) {
 	//prepare QSPI peripheral for ST-Link Utility operations
+	QSPI_CommandTypeDef sCommand;
+	uint8_t value = W25Q128FV_FSR_QE;
+
 	if (HAL_QSPI_DeInit(&hqspi) != HAL_OK) {
 		return HAL_ERROR;
 	}
@@ -153,18 +156,42 @@ uint8_t CSP_QUADSPI_Init(void) {
 
 	HAL_Delay(1);
 
-	if (QSPI_AutoPollingMemReady() != HAL_OK) {
-		return HAL_ERROR;
-	}
+
 
 	if (QSPI_WriteEnable() != HAL_OK) {
 
 		return HAL_ERROR;
 	}
 
-	if (QSPI_Configuration() != HAL_OK) {
+	/* Set status register for Quad Enable,the Quad IO2 and IO3 pins are enable */
+	sCommand.InstructionMode   = QSPI_INSTRUCTION_1_LINE;
+  sCommand.Instruction       = WRITE_STATUS_REG2_CMD;
+  sCommand.AddressMode       = QSPI_ADDRESS_NONE;
+  sCommand.AlternateByteMode = QSPI_ALTERNATE_BYTES_NONE;
+  sCommand.DataMode          = QSPI_DATA_1_LINE;
+  sCommand.DummyCycles       = 0;
+  sCommand.NbData            = 1;
+  sCommand.DdrMode           = QSPI_DDR_MODE_DISABLE;
+  sCommand.DdrHoldHalfCycle  = QSPI_DDR_HHC_ANALOG_DELAY;
+  sCommand.SIOOMode          = QSPI_SIOO_INST_EVERY_CMD;
+	/* Configure the command */
+  if (HAL_QSPI_Command(&hqspi, &sCommand, HAL_QPSI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
+  {
+    return HAL_ERROR;
+  }
+	/* Transmit the data */
+	if (HAL_QSPI_Transmit(&hqspi, &value, HAL_QPSI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
+  {
+    return HAL_ERROR;
+  }
+
+	if (QSPI_AutoPollingMemReady() != HAL_OK) {
 		return HAL_ERROR;
 	}
+
+//	if (QSPI_Configuration() != HAL_OK) {
+//		return HAL_ERROR;
+//	}
 
 	return HAL_OK;
 }
@@ -273,81 +300,7 @@ static uint8_t QSPI_WriteEnable(void) {
 
 	return HAL_OK;
 }
-/*Enable quad mode and set dummy cycles count*/
-uint8_t QSPI_Configuration(void) {
 
-	QSPI_CommandTypeDef sCommand;
-	uint8_t test_buffer[4] = { 0 };
-	/*read status register*/
-	sCommand.InstructionMode = QSPI_INSTRUCTION_1_LINE;
-	sCommand.Instruction = READ_STATUS_REG_CMD;
-	sCommand.AddressMode = QSPI_ADDRESS_NONE;
-	sCommand.AlternateByteMode = QSPI_ALTERNATE_BYTES_NONE;
-	sCommand.DataMode = QSPI_DATA_1_LINE;
-	sCommand.DummyCycles = 0;
-	sCommand.DdrMode = QSPI_DDR_MODE_DISABLE;
-	sCommand.DdrHoldHalfCycle = QSPI_DDR_HHC_ANALOG_DELAY;
-	sCommand.SIOOMode = QSPI_SIOO_INST_EVERY_CMD;
-	sCommand.NbData = 1;
-
-	if (HAL_QSPI_Command(&hqspi, &sCommand, HAL_QPSI_TIMEOUT_DEFAULT_VALUE)
-			!= HAL_OK) {
-		return HAL_ERROR;
-	}
-	if (HAL_QSPI_Receive(&hqspi, test_buffer,
-	HAL_QPSI_TIMEOUT_DEFAULT_VALUE) != HAL_OK) {
-		return HAL_ERROR;
-	}
-	/*read configuration register*/
-	sCommand.InstructionMode = QSPI_INSTRUCTION_1_LINE;
-	sCommand.Instruction = READ_CONFIGURATION_REG_CMD;
-	sCommand.AddressMode = QSPI_ADDRESS_NONE;
-	sCommand.AlternateByteMode = QSPI_ALTERNATE_BYTES_NONE;
-	sCommand.DataMode = QSPI_DATA_1_LINE;
-	sCommand.DummyCycles = 0;
-	sCommand.DdrMode = QSPI_DDR_MODE_DISABLE;
-	sCommand.DdrHoldHalfCycle = QSPI_DDR_HHC_ANALOG_DELAY;
-	sCommand.SIOOMode = QSPI_SIOO_INST_EVERY_CMD;
-	sCommand.NbData = 1;
-
-	if (HAL_QSPI_Command(&hqspi, &sCommand, HAL_QPSI_TIMEOUT_DEFAULT_VALUE)
-			!= HAL_OK) {
-		return HAL_ERROR;
-	}
-	if (HAL_QSPI_Receive(&hqspi, &(test_buffer[1]),
-	HAL_QPSI_TIMEOUT_DEFAULT_VALUE) != HAL_OK) {
-		return HAL_ERROR;
-	}
-	/*modify buffer to enable quad mode*/
-	test_buffer[0] |= 0x40;
-
-	/*set dummy cycles*/
-	test_buffer[1] |= 0xC0;
-
-	sCommand.InstructionMode = QSPI_INSTRUCTION_1_LINE;
-	sCommand.AddressSize = QSPI_ADDRESS_24_BITS;
-	sCommand.AlternateByteMode = QSPI_ALTERNATE_BYTES_NONE;
-	sCommand.DdrMode = QSPI_DDR_MODE_DISABLE;
-	sCommand.DdrHoldHalfCycle = QSPI_DDR_HHC_ANALOG_DELAY;
-	sCommand.SIOOMode = QSPI_SIOO_INST_EVERY_CMD;
-	sCommand.Instruction = WRITE_STATUS_REG_CMD;
-	sCommand.AddressMode = QSPI_ADDRESS_NONE;
-	sCommand.DataMode = QSPI_DATA_1_LINE;
-	sCommand.DummyCycles = 0;
-	sCommand.NbData = 2;
-
-	if (HAL_QSPI_Command(&hqspi, &sCommand, HAL_QPSI_TIMEOUT_DEFAULT_VALUE)
-			!= HAL_OK) {
-		return HAL_ERROR;
-	}
-
-	if (HAL_QSPI_Transmit(&hqspi, test_buffer,
-	HAL_QPSI_TIMEOUT_DEFAULT_VALUE) != HAL_OK) {
-		Error_Handler();
-		return HAL_ERROR;
-	}
-	return HAL_OK;
-}
 
 uint8_t CSP_QSPI_EraseSector(uint32_t EraseStartAddress, uint32_t EraseEndAddress) {
 
@@ -421,7 +374,7 @@ uint8_t CSP_QSPI_WriteMemory(uint8_t* buffer, uint32_t address,uint32_t buffer_s
 	sCommand.DdrHoldHalfCycle = QSPI_DDR_HHC_ANALOG_DELAY;
 	sCommand.SIOOMode = QSPI_SIOO_INST_EVERY_CMD;
 	sCommand.Instruction = QUAD_IN_FAST_PROG_CMD;
-	sCommand.AddressMode = QSPI_ADDRESS_4_LINES;
+	sCommand.AddressMode = QSPI_ADDRESS_1_LINE;
 	sCommand.DataMode = QSPI_DATA_4_LINES;
 	sCommand.NbData = buffer_size;
 	sCommand.Address = address;
@@ -485,7 +438,7 @@ uint8_t CSP_QSPI_EnableMemoryMappedMode(void) {
 	sCommand.DdrMode = QSPI_DDR_MODE_DISABLE;
 	sCommand.DdrHoldHalfCycle = QSPI_DDR_HHC_ANALOG_DELAY;
 	sCommand.SIOOMode = QSPI_SIOO_INST_EVERY_CMD;
-	sCommand.AddressMode = QSPI_ADDRESS_1_LINE;
+	sCommand.AddressMode = QSPI_ADDRESS_4_LINES;
 	sCommand.DataMode = QSPI_DATA_4_LINES;
 	sCommand.NbData = 0;
 	sCommand.Address = 0;
@@ -542,7 +495,6 @@ uint8_t QSPI_ResetChip() {
 	}
 	return HAL_OK;
 }
-
 
 /* USER CODE END 1 */
 

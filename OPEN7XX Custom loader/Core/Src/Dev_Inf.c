@@ -11,7 +11,7 @@ __root struct StorageInfo const StorageInfo  =  {
 #else
 struct StorageInfo const StorageInfo = {
 #endif
-		"QSPI_flashloader_CSP", 	 	         // Device Name + version number
+		"W25Q128_STM32F746_OPEN7XXI", 	 	         // Device Name + version number
 		SPI_FLASH,                  		 // Device Type
 		0x90000000,                			 // Device Start Address
 		MEMORY_FLASH_SIZE,                 	 // Device Size in Bytes

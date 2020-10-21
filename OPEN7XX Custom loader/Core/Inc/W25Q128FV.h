@@ -52,6 +52,7 @@
 /* Write Operations */
 #define WRITE_ENABLE_CMD                     0x06
 #define WRITE_DISABLE_CMD                    0x04
+#define WRITE_ENABLE_VOLATILE_SR_CMD		 0x50
 
 /* Register Operations */
 #define READ_STATUS_REG1_CMD                  0x05
@@ -62,10 +63,13 @@
 #define WRITE_STATUS_REG2_CMD                 0x31
 #define WRITE_STATUS_REG3_CMD                 0x11
 
+#define SET_READ_PARAMETERS_CMD				  0xC0
+
 
 /* Program Operations */
 #define PAGE_PROG_CMD                        0x02
 #define QUAD_INPUT_PAGE_PROG_CMD             0x32
+#define EXT_QUAD_IN_FAST_PROG_CMD            0x12
 
 
 /* Erase Operations */

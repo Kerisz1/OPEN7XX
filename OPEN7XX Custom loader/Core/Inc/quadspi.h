@@ -28,6 +28,7 @@
 
 /* USER CODE BEGIN Includes */
 
+
 /* USER CODE END Includes */
 
 extern QSPI_HandleTypeDef hqspi;
@@ -47,27 +48,30 @@ void MX_QUADSPI_Init(void);
 /* USER CODE BEGIN Prototypes */
 
 /*MX25L512 memory parameters*/
-#define MEMORY_FLASH_SIZE				0x1000000 /* 128 MBits => 16MBytes */
-#define MEMORY_BLOCK_SIZE				0x100     /* 256 sectors of 64KBytes */
-#define MEMORY_SECTOR_SIZE				0x10      /* 16 subsectors of 4kBytes */
-#define MEMORY_PAGE_SIZE				0x100     /* 262144 pages of 256 bytes */
+#define MEMORY_FLASH_SIZE				0x1000000 /* 128 MBits*/
+#define MEMORY_SECTOR_SIZE				0x10000   /* 64kBytes */
+#define MEMORY_PAGE_SIZE				0x100     /* 256 bytes */
 
 
-/*MX25L512 commands */
-#define WRITE_ENABLE_CMD 0x06
-#define READ_STATUS_REG_CMD 0x05
-#define WRITE_STATUS_REG_CMD 0x01
-#define SECTOR_ERASE_CMD 0x20
-#define CHIP_ERASE_CMD 0xC7
-#define QUAD_IN_FAST_PROG_CMD 0x38
-#define READ_CONFIGURATION_REG_CMD 0x15
-#define QUAD_READ_IO_CMD 0xEC
-#define QUAD_OUT_FAST_READ_CMD 0x6B
-#define QPI_ENABLE_CMD 0x35
-#define DUMMY_CLOCK_CYCLES_READ_QUAD 10
-#define RESET_ENABLE_CMD 0x66
-#define RESET_EXECUTE_CMD 0x99
-#define DISABLE_QIP_MODE 0xf5
+/*W25Q128FV commands */
+#define WRITE_ENABLE_CMD 			0x06
+#define READ_STATUS_REG_CMD 		0x05
+#define ENTER_4_BYTE_ADD_CMD 		0xB7
+#define WRITE_VOL_CFG_REG_CMD 		0x81
+#define SECTOR_ERASE_CMD 			0xD8
+#define CHIP_ERASE_CMD 				0xC7
+#define QUAD_IN_FAST_PROG_CMD 		0x32
+#define READ_CONFIGURATION_REG_CMD 	0x85
+#define QUAD_OUT_FAST_READ_CMD 		0xEB
+#define DUMMY_CLOCK_CYCLES_READ_QUAD 6
+#define RESET_ENABLE_CMD 			0x66
+#define RESET_EXECUTE_CMD 			0x99
+
+#define WRITE_STATUS_REG1_CMD		0x01
+#define WRITE_STATUS_REG2_CMD		0x31
+#define WRITE_STATUS_REG3_CMD		0x11
+
+#define W25Q128FV_FSR_QE            ((uint8_t)0x02)
 
 /* USER CODE END Prototypes */
 

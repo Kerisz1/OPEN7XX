@@ -44,8 +44,14 @@ void touchgfx_init()
   FontManager::setFontProvider(&fontProvider);
 
   FrontendHeap& heap = FrontendHeap::getInstance();
-  (void)heap; // we need to obtain the reference above to initialize the frontend heap.
+  /*
+   * we need to obtain the reference above to initialize the frontend heap.
+   */
+  (void)heap;
 
+  /*
+   * Initialize TouchGFX
+   */
   hal.initialize();
 }
 

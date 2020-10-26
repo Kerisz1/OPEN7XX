@@ -1,18 +1,18 @@
 /**
   ******************************************************************************
-  * @file    stm32746g_discovery_qspi.c
+  * @file    stm32746i_OPEN7XXI_qspi.c
   * @author  MCD Application Team
-  * @brief   This file includes a standard driver for the N25Q128A QSPI
-  *          memory mounted on STM32746G-Discovery board.
+  * @brief   This file includes a standard driver for the W25Q128FV QSPI
+  *          memory mounted on STM32746I OPEN7XXI board.
   @verbatim
   ==============================================================================
                      ##### How to use this driver #####
   ==============================================================================  
   [..] 
-   (#) This driver is used to drive the N25Q128A QSPI external
-       memory mounted on STM32746G-Discovery board.
+   (#) This driver is used to drive the W25Q128FV QSPI external
+       memory mounted on STM32746I-OPEN7XXI board.
        
-   (#) This driver need a specific component driver (N25Q128A) to be included with.
+   (#) This driver need a specific component driver (W25Q128FV) to be included with.
 
    (#) Initialization steps:
        (++) Initialize the QPSI external memory using the BSP_QSPI_Init() function. This 
@@ -67,7 +67,7 @@
 - stm32f7xx_hal_gpio.c
 - stm32f7xx_hal_cortex.c
 - stm32f7xx_hal_rcc_ex.h
-- n25q128a.h
+- W25Q128FV.h
 EndDependencies */
 
 /* Includes ------------------------------------------------------------------*/
@@ -77,18 +77,18 @@ EndDependencies */
   * @{
   */
 
-/** @addtogroup STM32746G_DISCOVERY
+/** @addtogroup STM32746I-OPEN7XXI
   * @{
   */ 
   
-/** @defgroup STM32746G_DISCOVERY_QSPI STM32746G-Discovery QSPI
+/** @defgroup STM32746I-OPEN7XXI_QSPI STM32746I-OPEN7XXI QSPI
   * @{
   */ 
 
 
 /* Private variables ---------------------------------------------------------*/
 
-/** @defgroup STM32746G_DISCOVERY_QSPI_Private_Variables STM32746G_DISCOVERY QSPI Private Variables
+/** @defgroup STM32746I-OPEN7XXI_QSPI_Private_Variables STM32746I-OPEN7XXI QSPI Private Variables
   * @{
   */       
 QSPI_HandleTypeDef QSPIHandle;
@@ -101,11 +101,11 @@ QSPI_HandleTypeDef QSPIHandle;
 
 /* Private functions ---------------------------------------------------------*/
     
-/** @defgroup STM32746G_DISCOVERY_QSPI_Private_Functions STM32746G_DISCOVERY QSPI Private Functions
+/** @defgroup STM32746I-OPEN7XXI_QSPI_Private_Functions STM32746I-OPEN7XXI QSPI Private Functions
   * @{
   */ 
 static uint8_t QSPI_ResetMemory          (QSPI_HandleTypeDef *hqspi);
-static uint8_t QSPI_DummyCyclesCfg       (QSPI_HandleTypeDef *hqspi);
+//static uint8_t QSPI_DummyCyclesCfg       (QSPI_HandleTypeDef *hqspi);
 static uint8_t QSPI_WriteEnable          (QSPI_HandleTypeDef *hqspi);
 static uint8_t QSPI_AutoPollingMemReady  (QSPI_HandleTypeDef *hqspi, uint32_t Timeout);
 
@@ -113,7 +113,7 @@ static uint8_t QSPI_AutoPollingMemReady  (QSPI_HandleTypeDef *hqspi, uint32_t Ti
   * @}
   */
     
-/** @defgroup STM32746G_DISCOVERY_QSPI_Exported_Functions STM32746G_DISCOVERY QSPI Exported Functions
+/** @defgroup STM32746I-OPEN7XXI_QSPI_Exported_Functions STM32746I-OPEN7XXI QSPI Exported Functions
   * @{
   */ 
 
@@ -138,7 +138,7 @@ uint8_t BSP_QSPI_Init(void)
   QSPIHandle.Init.ClockPrescaler     = 1; /* QSPI freq = 216 MHz/(1+1) = 108 Mhz */
   QSPIHandle.Init.FifoThreshold      = 4;
   QSPIHandle.Init.SampleShifting     = QSPI_SAMPLE_SHIFTING_HALFCYCLE;
-  QSPIHandle.Init.FlashSize          = POSITION_VAL(N25Q128A_FLASH_SIZE) - 1;
+  QSPIHandle.Init.FlashSize          = 23;
   QSPIHandle.Init.ChipSelectHighTime = QSPI_CS_HIGH_TIME_6_CYCLE; /* Min 50ns for nonRead */
   QSPIHandle.Init.ClockMode          = QSPI_CLOCK_MODE_0;
   QSPIHandle.Init.FlashID            = QSPI_FLASH_ID_1;
@@ -155,11 +155,11 @@ uint8_t BSP_QSPI_Init(void)
     return QSPI_NOT_SUPPORTED;
   }
  
-  /* Configuration of the dummy cycles on QSPI memory side */
-  if (QSPI_DummyCyclesCfg(&QSPIHandle) != QSPI_OK)
-  {
-    return QSPI_NOT_SUPPORTED;
-  }
+//  /* Configuration of the dummy cycles on QSPI memory side */
+//  if (QSPI_DummyCyclesCfg(&QSPIHandle) != QSPI_OK)
+//  {
+//    return QSPI_NOT_SUPPORTED;
+//  }
   
   return QSPI_OK;
 }
@@ -203,7 +203,7 @@ uint8_t BSP_QSPI_Read(uint8_t* pData, uint32_t ReadAddr, uint32_t Size)
   s_command.Address           = ReadAddr;
   s_command.AlternateByteMode = QSPI_ALTERNATE_BYTES_NONE;
   s_command.DataMode          = QSPI_DATA_4_LINES;
-  s_command.DummyCycles       = N25Q128A_DUMMY_CYCLES_READ_QUAD;
+  s_command.DummyCycles       = W25Q128FV_DUMMY_CYCLES_READ_QUAD;
   s_command.NbData            = Size;
   s_command.DdrMode           = QSPI_DDR_MODE_DISABLE;
   s_command.DdrHoldHalfCycle  = QSPI_DDR_HHC_ANALOG_DELAY;
@@ -243,7 +243,7 @@ uint8_t BSP_QSPI_Write(uint8_t* pData, uint32_t WriteAddr, uint32_t Size)
   uint32_t end_addr, current_size, current_addr;
 
   /* Calculation of the size between the write address and the end of the page */
-  current_size = N25Q128A_PAGE_SIZE - (WriteAddr % N25Q128A_PAGE_SIZE);
+  current_size = W25Q128FV_PAGE_SIZE - (WriteAddr % W25Q128FV_PAGE_SIZE);
 
   /* Check if the size of the data is less than the remaining place in the page */
   if (current_size > Size)
@@ -300,7 +300,7 @@ uint8_t BSP_QSPI_Write(uint8_t* pData, uint32_t WriteAddr, uint32_t Size)
     /* Update the address and size variables for next page programming */
     current_addr += current_size;
     pData += current_size;
-    current_size = ((current_addr + N25Q128A_PAGE_SIZE) > end_addr) ? (end_addr - current_addr) : N25Q128A_PAGE_SIZE;
+    current_size = ((current_addr + W25Q128FV_PAGE_SIZE) > end_addr) ? (end_addr - current_addr) : W25Q128FV_PAGE_SIZE;
   } while (current_addr < end_addr);
   
   return QSPI_OK;
@@ -341,7 +341,7 @@ uint8_t BSP_QSPI_Erase_Block(uint32_t BlockAddress)
   }
   
   /* Configure automatic polling mode to wait for end of erase */  
-  if (QSPI_AutoPollingMemReady(&QSPIHandle, N25Q128A_SUBSECTOR_ERASE_MAX_TIME) != QSPI_OK)
+  if (QSPI_AutoPollingMemReady(&QSPIHandle, W25Q128FV_SUBSECTOR_ERASE_MAX_TIME) != QSPI_OK)
   {
     return QSPI_ERROR;
   }
@@ -381,7 +381,7 @@ uint8_t BSP_QSPI_Erase_Chip(void)
   }
   
   /* Configure automatic polling mode to wait for end of erase */  
-  if (QSPI_AutoPollingMemReady(&QSPIHandle, N25Q128A_BULK_ERASE_MAX_TIME) != QSPI_OK)
+  if (QSPI_AutoPollingMemReady(&QSPIHandle, W25Q128FV_BULK_ERASE_MAX_TIME) != QSPI_OK)
   {
     return QSPI_ERROR;
   }
@@ -423,15 +423,15 @@ uint8_t BSP_QSPI_GetStatus(void)
   }
   
   /* Check the value of the register */
-  if ((reg & (N25Q128A_FSR_PRERR | N25Q128A_FSR_VPPERR | N25Q128A_FSR_PGERR | N25Q128A_FSR_ERERR)) != 0)
+  if ((reg & (W25Q128FV_FSR_PRERR | W25Q128FV_FSR_VPPERR | W25Q128FV_FSR_PGERR | W25Q128FV_FSR_ERERR)) != 0)
   {
     return QSPI_ERROR;
   }
-  else if ((reg & (N25Q128A_FSR_PGSUS | N25Q128A_FSR_ERSUS)) != 0)
+  else if ((reg & (W25Q128FV_FSR_PGSUS | W25Q128FV_FSR_ERSUS)) != 0)
   {
     return QSPI_SUSPENDED;
   }
-  else if ((reg & N25Q128A_FSR_READY) != 0)
+  else if ((reg & W25Q128FV_FSR_READY) != 0)
   {
     return QSPI_OK;
   }
@@ -449,11 +449,11 @@ uint8_t BSP_QSPI_GetStatus(void)
 uint8_t BSP_QSPI_GetInfo(QSPI_Info* pInfo)
 {
   /* Configure the structure with the memory configuration */
-  pInfo->FlashSize          = N25Q128A_FLASH_SIZE;
-  pInfo->EraseSectorSize    = N25Q128A_SUBSECTOR_SIZE;
-  pInfo->EraseSectorsNumber = (N25Q128A_FLASH_SIZE/N25Q128A_SUBSECTOR_SIZE);
-  pInfo->ProgPageSize       = N25Q128A_PAGE_SIZE;
-  pInfo->ProgPagesNumber    = (N25Q128A_FLASH_SIZE/N25Q128A_PAGE_SIZE);
+  pInfo->FlashSize          = W25Q128FV_FLASH_SIZE;
+  pInfo->EraseSectorSize    = W25Q128FV_SUBSECTOR_SIZE;
+  pInfo->EraseSectorsNumber = (W25Q128FV_FLASH_SIZE/W25Q128FV_SUBSECTOR_SIZE);
+  pInfo->ProgPageSize       = W25Q128FV_PAGE_SIZE;
+  pInfo->ProgPagesNumber    = (W25Q128FV_FLASH_SIZE/W25Q128FV_PAGE_SIZE);
   
   return QSPI_OK;
 }
@@ -474,7 +474,7 @@ uint8_t BSP_QSPI_EnableMemoryMappedMode(void)
   s_command.AddressSize       = QSPI_ADDRESS_24_BITS;
   s_command.AlternateByteMode = QSPI_ALTERNATE_BYTES_NONE;
   s_command.DataMode          = QSPI_DATA_4_LINES;
-  s_command.DummyCycles       = N25Q128A_DUMMY_CYCLES_READ_QUAD;
+  s_command.DummyCycles       = W25Q128FV_DUMMY_CYCLES_READ_QUAD;
   s_command.DdrMode           = QSPI_DDR_MODE_DISABLE;
   s_command.DdrHoldHalfCycle  = QSPI_DDR_HHC_ANALOG_DELAY;
   s_command.SIOOMode          = QSPI_SIOO_INST_EVERY_CMD;
@@ -643,59 +643,59 @@ static uint8_t QSPI_ResetMemory(QSPI_HandleTypeDef *hqspi)
   * @param  hqspi: QSPI handle
   * @retval None
   */
-static uint8_t QSPI_DummyCyclesCfg(QSPI_HandleTypeDef *hqspi)
-{
-  QSPI_CommandTypeDef s_command;
-  uint8_t reg;
-
-  /* Initialize the read volatile configuration register command */
-  s_command.InstructionMode   = QSPI_INSTRUCTION_1_LINE;
-  s_command.Instruction       = READ_VOL_CFG_REG_CMD;
-  s_command.AddressMode       = QSPI_ADDRESS_NONE;
-  s_command.AlternateByteMode = QSPI_ALTERNATE_BYTES_NONE;
-  s_command.DataMode          = QSPI_DATA_1_LINE;
-  s_command.DummyCycles       = 0;
-  s_command.NbData            = 1;
-  s_command.DdrMode           = QSPI_DDR_MODE_DISABLE;
-  s_command.DdrHoldHalfCycle  = QSPI_DDR_HHC_ANALOG_DELAY;
-  s_command.SIOOMode          = QSPI_SIOO_INST_EVERY_CMD;
-
-  /* Configure the command */
-  if (HAL_QSPI_Command(hqspi, &s_command, HAL_QPSI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
-  {
-    return QSPI_ERROR;
-  }
-
-  /* Reception of the data */
-  if (HAL_QSPI_Receive(hqspi, &reg, HAL_QPSI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
-  {
-    return QSPI_ERROR;
-  }
-
-  /* Enable write operations */
-  if (QSPI_WriteEnable(hqspi) != QSPI_OK)
-  {
-    return QSPI_ERROR;
-  }
-
-  /* Update volatile configuration register (with new dummy cycles) */  
-  s_command.Instruction = WRITE_VOL_CFG_REG_CMD;
-  MODIFY_REG(reg, N25Q128A_VCR_NB_DUMMY, (N25Q128A_DUMMY_CYCLES_READ_QUAD << POSITION_VAL(N25Q128A_VCR_NB_DUMMY)));
-      
-  /* Configure the write volatile configuration register command */
-  if (HAL_QSPI_Command(hqspi, &s_command, HAL_QPSI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
-  {
-    return QSPI_ERROR;
-  }
-
-  /* Transmission of the data */
-  if (HAL_QSPI_Transmit(hqspi, &reg, HAL_QPSI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
-  {
-    return QSPI_ERROR;
-  }
-  
-  return QSPI_OK;
-}
+//static uint8_t QSPI_DummyCyclesCfg(QSPI_HandleTypeDef *hqspi)
+//{
+//  QSPI_CommandTypeDef s_command;
+//  uint8_t reg;
+//
+//  /* Initialize the read volatile configuration register command */
+//  s_command.InstructionMode   = QSPI_INSTRUCTION_1_LINE;
+//  s_command.Instruction       = READ_VOL_CFG_REG_CMD;
+//  s_command.AddressMode       = QSPI_ADDRESS_NONE;
+//  s_command.AlternateByteMode = QSPI_ALTERNATE_BYTES_NONE;
+//  s_command.DataMode          = QSPI_DATA_1_LINE;
+//  s_command.DummyCycles       = 0;
+//  s_command.NbData            = 1;
+//  s_command.DdrMode           = QSPI_DDR_MODE_DISABLE;
+//  s_command.DdrHoldHalfCycle  = QSPI_DDR_HHC_ANALOG_DELAY;
+//  s_command.SIOOMode          = QSPI_SIOO_INST_EVERY_CMD;
+//
+//  /* Configure the command */
+//  if (HAL_QSPI_Command(hqspi, &s_command, HAL_QPSI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
+//  {
+//    return QSPI_ERROR;
+//  }
+//
+//  /* Reception of the data */
+//  if (HAL_QSPI_Receive(hqspi, &reg, HAL_QPSI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
+//  {
+//    return QSPI_ERROR;
+//  }
+//
+//  /* Enable write operations */
+//  if (QSPI_WriteEnable(hqspi) != QSPI_OK)
+//  {
+//    return QSPI_ERROR;
+//  }
+//
+//  /* Update volatile configuration register (with new dummy cycles) */
+//  s_command.Instruction = WRITE_VOL_CFG_REG_CMD;
+//  MODIFY_REG(reg, W25Q128FV_VCR_NB_DUMMY, (W25Q128FV_DUMMY_CYCLES_READ_QUAD << POSITION_VAL(W25Q128FV_VCR_NB_DUMMY)));
+//
+//  /* Configure the write volatile configuration register command */
+//  if (HAL_QSPI_Command(hqspi, &s_command, HAL_QPSI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
+//  {
+//    return QSPI_ERROR;
+//  }
+//
+//  /* Transmission of the data */
+//  if (HAL_QSPI_Transmit(hqspi, &reg, HAL_QPSI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
+//  {
+//    return QSPI_ERROR;
+//  }
+//
+//  return QSPI_OK;
+//}
 
 /**
   * @brief  This function send a Write Enable and wait it is effective.
@@ -724,8 +724,8 @@ static uint8_t QSPI_WriteEnable(QSPI_HandleTypeDef *hqspi)
   }
   
   /* Configure automatic polling mode to wait for write enabling */  
-  s_config.Match           = N25Q128A_SR_WREN;
-  s_config.Mask            = N25Q128A_SR_WREN;
+  s_config.Match           = W25Q128FV_SR_WREN;
+  s_config.Mask            = W25Q128FV_SR_WREN;
   s_config.MatchMode       = QSPI_MATCH_MODE_AND;
   s_config.StatusBytesSize = 1;
   s_config.Interval        = 0x10;
@@ -765,7 +765,7 @@ static uint8_t QSPI_AutoPollingMemReady(QSPI_HandleTypeDef *hqspi, uint32_t Time
   s_command.SIOOMode          = QSPI_SIOO_INST_EVERY_CMD;
 
   s_config.Match           = 0;
-  s_config.Mask            = N25Q128A_SR_WIP;
+  s_config.Mask            = W25Q128FV_SR_WIP;
   s_config.MatchMode       = QSPI_MATCH_MODE_AND;
   s_config.StatusBytesSize = 1;
   s_config.Interval        = 0x10;

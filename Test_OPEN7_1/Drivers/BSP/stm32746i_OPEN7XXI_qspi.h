@@ -1,9 +1,9 @@
 /**
   ******************************************************************************
-  * @file    stm32746g_discovery_qspi.h
+  * @file    stm32746i_OPEN7XXI_qspi.h
   * @author  MCD Application Team
   * @brief   This file contains the common defines and functions prototypes for
-  *          the stm32746g_discovery_qspi.c driver.
+  *          the stm32746i_OPEN7XXI_qspi.c driver.
   ******************************************************************************
   * @attention
   *
@@ -43,8 +43,8 @@
   */
     
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32746G_DISCOVERY_QSPI_H
-#define __STM32746G_DISCOVERY_QSPI_H
+#ifndef __STM32746I_OPEN7XXI_QSPI_H
+#define __STM32746I_OPEN7XXI_QSPI_H
 
 #ifdef __cplusplus
  extern "C" {
@@ -54,13 +54,13 @@
 #include "stm32f7xx_hal.h"
 #include "../Components/w25q128fv.h"
 
-/** @addtogroup STM32746G_DISCOVERY_QSPI
+/** @addtogroup STM32746I-OPEN7XXI_QSPI
   * @{
   */    
 
   
 /* Exported constants --------------------------------------------------------*/ 
-/** @defgroup STM32746G_DISCOVERY_QSPI_Exported_Constants STM32746G_DISCOVERY_QSPI Exported Constants
+/** @defgroup STM32746I-OPEN7XXI_QSPI_Exported_Constants STM32746I-OPEN7XXI_QSPI Exported Constants
   * @{
   */
 /* QSPI Error codes */
@@ -98,7 +98,7 @@
 #define QSPI_D3_PIN                GPIO_PIN_13
 #define QSPI_D3_GPIO_PORT          GPIOD
 
-/* N25Q128A13EF840E Micron memory */
+/* W25Q128FV13EF840E Micron memory */
 /* Size of the flash */
 #define QSPI_FLASH_SIZE            23     /* Address bus width to access whole memory space */
 #define QSPI_PAGE_SIZE             256
@@ -110,7 +110,7 @@
   */
 
 /* Exported types ------------------------------------------------------------*/
-/** @defgroup STM32746G_DISCOVERY_QSPI_Exported_Types STM32746G_DISCOVERY_QSPI Exported Types
+/** @defgroup STM32746I-OPEN7XXI_QSPI_Exported_Types STM32746G_DISCOVERY_QSPI Exported Types
   * @{
   */
 /* QSPI Info */
@@ -158,7 +158,7 @@ void BSP_QSPI_MspDeInit(QSPI_HandleTypeDef *hqspi, void *Params);
 }
 #endif
 
-#endif /* __STM32746G_DISCOVERY_QSPI_H */
+#endif /* __STM32746I_OPEN7XXI_QSPI_H */
 /**
   * @}
   */ 

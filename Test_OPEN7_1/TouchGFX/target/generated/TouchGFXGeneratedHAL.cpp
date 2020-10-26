@@ -91,7 +91,12 @@ void TouchGFXGeneratedHAL::setTFTFrameBuffer(uint16_t* adr)
 
 void TouchGFXGeneratedHAL::flushFrameBuffer(const touchgfx::Rect& rect)
 {
-    HAL::flushFrameBuffer(rect);
+  HAL::flushFrameBuffer(rect);
+}
+
+bool TouchGFXGeneratedHAL::blockCopy(void* RESTRICT dest, const void* RESTRICT src, uint32_t numBytes)
+{
+  return HAL::blockCopy(dest, src, numBytes);
 }
 
 uint16_t TouchGFXGeneratedHAL::getTFTCurrentLine()
@@ -105,14 +110,7 @@ uint16_t TouchGFXGeneratedHAL::getTFTCurrentLine()
 
     // The semantics of the getTFTCurrentLine() function is to return a value
     // in the range of 0-totalheight. If we are still in back porch area, return 0.
-    if (curr < backPorchY)
-    {
-        return 0;
-    }
-    else
-    {
-        return curr - backPorchY;
-    }
+    return (curr < backPorchY) ? 0 : (curr - backPorchY);
 }
 
 extern "C"
@@ -140,5 +138,4 @@ extern "C"
         }
     }
 }
-
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

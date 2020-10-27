@@ -215,8 +215,8 @@ uint8_t BSP_QSPI_Read(uint8_t* pData, uint32_t ReadAddr, uint32_t Size)
     return QSPI_ERROR;
   }
   
-  /* Set S# timing for Read command */
-  MODIFY_REG(QSPIHandle.Instance->DCR, QUADSPI_DCR_CSHT, QSPI_CS_HIGH_TIME_3_CYCLE);
+//  /* Set S# timing for Read command */
+//  MODIFY_REG(QSPIHandle.Instance->DCR, QUADSPI_DCR_CSHT, QSPI_CS_HIGH_TIME_3_CYCLE);
   
   /* Reception of the data */
   if (HAL_QSPI_Receive(&QSPIHandle, pData, HAL_QPSI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
@@ -224,8 +224,8 @@ uint8_t BSP_QSPI_Read(uint8_t* pData, uint32_t ReadAddr, uint32_t Size)
     return QSPI_ERROR;
   }
   
-  /* Restore S# timing for nonRead commands */
-  MODIFY_REG(QSPIHandle.Instance->DCR, QUADSPI_DCR_CSHT, QSPI_CS_HIGH_TIME_6_CYCLE);
+//  /* Restore S# timing for nonRead commands */
+//  MODIFY_REG(QSPIHandle.Instance->DCR, QUADSPI_DCR_CSHT, QSPI_CS_HIGH_TIME_6_CYCLE);
 
   return QSPI_OK;
 }
@@ -257,7 +257,7 @@ uint8_t BSP_QSPI_Write(uint8_t* pData, uint32_t WriteAddr, uint32_t Size)
 
   /* Initialize the program command */
   s_command.InstructionMode   = QSPI_INSTRUCTION_1_LINE;
-  s_command.Instruction       = EXT_QUAD_IN_FAST_PROG_CMD;
+  s_command.Instruction       = QUAD_IN_FAST_PROG_CMD;
   s_command.AddressMode       = QSPI_ADDRESS_4_LINES;
   s_command.AddressSize       = QSPI_ADDRESS_24_BITS;
   s_command.AlternateByteMode = QSPI_ALTERNATE_BYTES_NONE;
@@ -393,53 +393,53 @@ uint8_t BSP_QSPI_Erase_Chip(void)
   * @brief  Reads current status of the QSPI memory.
   * @retval QSPI memory status
   */
-uint8_t BSP_QSPI_GetStatus(void)
-{
-  QSPI_CommandTypeDef s_command;
-  uint8_t reg;
-
-  /* Initialize the read flag status register command */
-  s_command.InstructionMode   = QSPI_INSTRUCTION_1_LINE;
-  s_command.Instruction       = READ_FLAG_STATUS_REG_CMD;
-  s_command.AddressMode       = QSPI_ADDRESS_NONE;
-  s_command.AlternateByteMode = QSPI_ALTERNATE_BYTES_NONE;
-  s_command.DataMode          = QSPI_DATA_1_LINE;
-  s_command.DummyCycles       = 0;
-  s_command.NbData            = 1;
-  s_command.DdrMode           = QSPI_DDR_MODE_DISABLE;
-  s_command.DdrHoldHalfCycle  = QSPI_DDR_HHC_ANALOG_DELAY;
-  s_command.SIOOMode          = QSPI_SIOO_INST_EVERY_CMD;
-
-  /* Configure the command */
-  if (HAL_QSPI_Command(&QSPIHandle, &s_command, HAL_QPSI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
-  {
-    return QSPI_ERROR;
-  }
-
-  /* Reception of the data */
-  if (HAL_QSPI_Receive(&QSPIHandle, &reg, HAL_QPSI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
-  {
-    return QSPI_ERROR;
-  }
-  
-  /* Check the value of the register */
-  if ((reg & (W25Q128FV_FSR_PRERR | W25Q128FV_FSR_VPPERR | W25Q128FV_FSR_PGERR | W25Q128FV_FSR_ERERR)) != 0)
-  {
-    return QSPI_ERROR;
-  }
-  else if ((reg & (W25Q128FV_FSR_PGSUS | W25Q128FV_FSR_ERSUS)) != 0)
-  {
-    return QSPI_SUSPENDED;
-  }
-  else if ((reg & W25Q128FV_FSR_READY) != 0)
-  {
-    return QSPI_OK;
-  }
-  else
-  {
-    return QSPI_BUSY;
-  }
-}
+//uint8_t BSP_QSPI_GetStatus(void)
+//{
+//  QSPI_CommandTypeDef s_command;
+//  uint8_t reg;
+//
+//  /* Initialize the read flag status register command */
+//  s_command.InstructionMode   = QSPI_INSTRUCTION_1_LINE;
+//  s_command.Instruction       = READ_FLAG_STATUS_REG_CMD;
+//  s_command.AddressMode       = QSPI_ADDRESS_NONE;
+//  s_command.AlternateByteMode = QSPI_ALTERNATE_BYTES_NONE;
+//  s_command.DataMode          = QSPI_DATA_1_LINE;
+//  s_command.DummyCycles       = 0;
+//  s_command.NbData            = 1;
+//  s_command.DdrMode           = QSPI_DDR_MODE_DISABLE;
+//  s_command.DdrHoldHalfCycle  = QSPI_DDR_HHC_ANALOG_DELAY;
+//  s_command.SIOOMode          = QSPI_SIOO_INST_EVERY_CMD;
+//
+//  /* Configure the command */
+//  if (HAL_QSPI_Command(&QSPIHandle, &s_command, HAL_QPSI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
+//  {
+//    return QSPI_ERROR;
+//  }
+//
+//  /* Reception of the data */
+//  if (HAL_QSPI_Receive(&QSPIHandle, &reg, HAL_QPSI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
+//  {
+//    return QSPI_ERROR;
+//  }
+//
+//  /* Check the value of the register */
+//  if ((reg & (W25Q128FV_FSR_PRERR | W25Q128FV_FSR_VPPERR | W25Q128FV_FSR_PGERR | W25Q128FV_FSR_ERERR)) != 0)
+//  {
+//    return QSPI_ERROR;
+//  }
+//  else if ((reg & (W25Q128FV_FSR_PGSUS | W25Q128FV_FSR_ERSUS)) != 0)
+//  {
+//    return QSPI_SUSPENDED;
+//  }
+//  else if ((reg & W25Q128FV_FSR_READY) != 0)
+//  {
+//    return QSPI_OK;
+//  }
+//  else
+//  {
+//    return QSPI_BUSY;
+//  }
+//}
 
 /**
   * @brief  Return the configuration of the QSPI memory.

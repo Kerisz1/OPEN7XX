@@ -75,8 +75,8 @@
 #define W25Q128FV_SUBSECTOR_SIZE              0x1000    /* 4096 subsectors of 4kBytes */
 #define W25Q128FV_PAGE_SIZE                   0x100     /* 65536 pages of 256 bytes */
 
-#define W25Q128FV_DUMMY_CYCLES_READ           8
-#define W25Q128FV_DUMMY_CYCLES_READ_QUAD      10
+#define W25Q128FV_DUMMY_CYCLES_READ           6
+#define W25Q128FV_DUMMY_CYCLES_READ_QUAD      6
 
 #define W25Q128FV_BULK_ERASE_MAX_TIME         250000
 #define W25Q128FV_SECTOR_ERASE_MAX_TIME       3000

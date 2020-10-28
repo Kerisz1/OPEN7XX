@@ -6,9 +6,9 @@
           {
             "Type": "Box",
             "Color": {
-              "Red": 111,
-              "Green": 184,
-              "Blue": 67
+              "Red": 42,
+              "Green": 89,
+              "Blue": 14
             },
             "Alpha": 255,
             "Name": "box1",
@@ -196,7 +196,8 @@
     "LandscapeSkinY": 0,
     "PortraitSkinX": 0,
     "PortraitSkinY": 0,
-    "DisplayOrientation": "Landscape"
+    "DisplayOrientation": "Landscape",
+    "Family": "STM32F7"
   },
   "Version": "4.15.0"
 }

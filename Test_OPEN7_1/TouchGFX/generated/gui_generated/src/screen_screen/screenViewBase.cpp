@@ -6,6 +6,8 @@
 #include "BitmapDatabase.hpp"
 
 screenViewBase::screenViewBase() :
+    interaction2Counter(0),
+    interaction4Counter(0),
     buttonCallback(this, &screenViewBase::buttonCallbackHandler)
 {
 
@@ -27,6 +29,47 @@ screenViewBase::screenViewBase() :
 void screenViewBase::setupScreen()
 {
 
+}
+
+//Handles delays
+void screenViewBase::handleTickEvent()
+{
+    if(interaction2Counter > 0)
+    {
+        interaction2Counter--;
+        if(interaction2Counter == 0)
+        {
+            //Interaction3
+            //When Interaction2 completed change screen to Screen1
+            //Go to Screen1 with screen transition towards North
+            application().gotoScreen1ScreenSlideTransitionNorth();
+
+            //Interaction4
+            //When Interaction3 completed delay
+            //Delay for 5000 ms (300 Ticks)
+            interaction4Counter = INTERACTION4_DURATION;
+        }
+    }
+    if(interaction4Counter > 0)
+    {
+        interaction4Counter--;
+        if(interaction4Counter == 0)
+        {
+            //Interaction5
+            //When Interaction4 completed change screen to screen
+            //Go to screen with screen transition towards North
+            application().gotoscreenScreenSlideTransitionNorth();
+        }
+    }
+}
+
+//Called when the screen is done with transition/load
+void screenViewBase::afterTransition()
+{
+    //Interaction2
+    //When screen is entered delay
+    //Delay for 5000 ms (300 Ticks)
+    interaction2Counter = INTERACTION2_DURATION;
 }
 
 void screenViewBase::buttonCallbackHandler(const touchgfx::AbstractButton& src)

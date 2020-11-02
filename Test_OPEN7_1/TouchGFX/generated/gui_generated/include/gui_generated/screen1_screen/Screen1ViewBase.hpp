@@ -10,6 +10,8 @@
 #include <touchgfx/widgets/Box.hpp>
 #include <touchgfx/widgets/Button.hpp>
 #include <touchgfx/widgets/TextArea.hpp>
+#include <touchgfx/EasingEquations.hpp>
+#include <touchgfx/mixins/MoveAnimator.hpp>
 
 class Screen1ViewBase : public touchgfx::View<Screen1Presenter>
 {
@@ -17,6 +19,8 @@ public:
     Screen1ViewBase();
     virtual ~Screen1ViewBase() {}
     virtual void setupScreen();
+    virtual void handleTickEvent();
+    virtual void afterTransition();
 
 protected:
     FrontendApplication& application() {
@@ -29,9 +33,16 @@ protected:
     touchgfx::Box __background;
     touchgfx::Box box1;
     touchgfx::Button button1;
-    touchgfx::TextArea textArea1;
+    touchgfx::MoveAnimator< touchgfx::TextArea > textArea1;
+    touchgfx::MoveAnimator< touchgfx::TextArea > textArea2;
 
 private:
+
+    /*
+     * Delay Variable Declarations
+     */
+    static const uint16_t INTERACTION1_DURATION = 300;
+    uint16_t interaction1Counter;
 
     /*
      * Callback Declarations

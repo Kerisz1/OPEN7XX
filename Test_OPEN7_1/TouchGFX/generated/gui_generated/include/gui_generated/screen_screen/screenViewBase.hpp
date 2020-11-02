@@ -38,8 +38,6 @@ private:
      */
     static const uint16_t INTERACTION2_DURATION = 300;
     uint16_t interaction2Counter;
-    static const uint16_t INTERACTION4_DURATION = 300;
-    uint16_t interaction4Counter;
 
     /*
      * Callback Declarations

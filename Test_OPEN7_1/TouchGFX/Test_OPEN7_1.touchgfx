@@ -70,7 +70,7 @@
           },
           {
             "InteractionName": "Interaction3",
-            "HasCompletedTrigger": true,
+            "HasCompletedTrigger": false,
             "Trigger": {
               "Type": "TriggerInteractionCompleted",
               "InteractionToTriggerOn": "Interaction2"
@@ -80,32 +80,6 @@
               "ScreenTransitionType": "ScreenTransitionSlide",
               "ScreenTransitionDirection": "North",
               "ActionComponent": "Screen1"
-            }
-          },
-          {
-            "InteractionName": "Interaction4",
-            "HasCompletedTrigger": true,
-            "Trigger": {
-              "Type": "TriggerInteractionCompleted",
-              "InteractionToTriggerOn": "Interaction3"
-            },
-            "Action": {
-              "Type": "ActionDelay",
-              "Duration": 5000
-            }
-          },
-          {
-            "InteractionName": "Interaction5",
-            "HasCompletedTrigger": false,
-            "Trigger": {
-              "Type": "TriggerInteractionCompleted",
-              "InteractionToTriggerOn": "Interaction4"
-            },
-            "Action": {
-              "Type": "ActionGotoScreen",
-              "ScreenTransitionType": "ScreenTransitionSlide",
-              "ScreenTransitionDirection": "North",
-              "ActionComponent": "screen"
             }
           }
         ],
@@ -118,9 +92,9 @@
           {
             "Type": "Box",
             "Color": {
-              "Red": 63,
-              "Green": 60,
-              "Blue": 207
+              "Red": 33,
+              "Green": 29,
+              "Blue": 199
             },
             "Alpha": 255,
             "Name": "box1",
@@ -157,9 +131,9 @@
             "TextId": "SingleUseId1",
             "TextRotation": "0",
             "Color": {
-              "Red": 141,
-              "Green": 207,
-              "Blue": 52
+              "Red": 18,
+              "Green": 20,
+              "Blue": 15
             },
             "Alpha": 255,
             "AutoSize": true,
@@ -174,12 +148,61 @@
             "Draggable": false,
             "Clickable": false,
             "Fadeable": false,
-            "Moveable": false
+            "Moveable": true
+          },
+          {
+            "Type": "TextArea",
+            "TextId": "SingleUseId2",
+            "TextRotation": "0",
+            "Color": {
+              "Red": 0,
+              "Green": 0,
+              "Blue": 0
+            },
+            "Alpha": 240,
+            "AutoSize": true,
+            "LineSpacing": 0,
+            "Name": "textArea2",
+            "X": 0,
+            "Y": 551,
+            "Width": 494,
+            "Height": 49,
+            "Visible": true,
+            "LockPosition": false,
+            "Draggable": false,
+            "Clickable": false,
+            "Fadeable": false,
+            "Moveable": true
           }
         ],
         "Interactions": [
           {
             "InteractionName": "Interaction1",
+            "HasCompletedTrigger": true,
+            "Trigger": {
+              "Type": "TriggerScreenEntered"
+            },
+            "Action": {
+              "Type": "ActionDelay",
+              "Duration": 5000
+            }
+          },
+          {
+            "InteractionName": "Interaction2",
+            "HasCompletedTrigger": false,
+            "Trigger": {
+              "Type": "TriggerInteractionCompleted",
+              "InteractionToTriggerOn": "Interaction1"
+            },
+            "Action": {
+              "Type": "ActionGotoScreen",
+              "ScreenTransitionType": "ScreenTransitionSlide",
+              "ScreenTransitionDirection": "East",
+              "ActionComponent": "Screen2"
+            }
+          },
+          {
+            "InteractionName": "Interaction3",
             "HasCompletedTrigger": false,
             "Trigger": {
               "Type": "TriggerClicked",
@@ -187,12 +210,63 @@
             },
             "Action": {
               "Type": "ActionGotoScreen",
-              "ScreenTransitionType": "ScreenTransitionNone",
+              "ScreenTransitionType": "ScreenTransitionWipe",
+              "ScreenTransitionDirection": "West",
               "ActionComponent": "screen"
             }
           }
         ],
         "Name": "Screen1",
+        "OverrideDefaultBufferSize": false,
+        "CanvasBufferSize": 0
+      },
+      {
+        "Components": [
+          {
+            "Type": "Image",
+            "RelativeFilename": "Image2.png",
+            "Alpha": 255,
+            "Name": "image1",
+            "X": 0,
+            "Y": 0,
+            "Width": 1024,
+            "Height": 600,
+            "Visible": true,
+            "LockPosition": false,
+            "Draggable": false,
+            "Clickable": false,
+            "Fadeable": false,
+            "Moveable": false
+          }
+        ],
+        "Interactions": [
+          {
+            "InteractionName": "Interaction1",
+            "HasCompletedTrigger": true,
+            "Trigger": {
+              "Type": "TriggerScreenEntered"
+            },
+            "Action": {
+              "Type": "ActionDelay",
+              "Duration": 5000
+            }
+          },
+          {
+            "InteractionName": "Interaction2",
+            "HasCompletedTrigger": false,
+            "Trigger": {
+              "Type": "TriggerInteractionCompleted",
+              "InteractionToTriggerOn": "Interaction1"
+            },
+            "Action": {
+              "Type": "ActionGotoScreen",
+              "ScreenTransitionType": "ScreenTransitionWipe",
+              "ScreenTransitionDirection": "South",
+              "ActionComponent": "screen"
+            }
+          }
+        ],
+        "Name": "Screen2",
         "OverrideDefaultBufferSize": false,
         "CanvasBufferSize": 0
       }
@@ -201,6 +275,10 @@
     "TextEntries": [
       {
         "TextEntryId": "SingleUseId1",
+        "IsResource": false
+      },
+      {
+        "TextEntryId": "SingleUseId2",
         "IsResource": false
       }
     ],

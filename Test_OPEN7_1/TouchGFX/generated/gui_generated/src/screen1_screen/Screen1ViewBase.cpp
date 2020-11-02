@@ -7,6 +7,7 @@
 #include <texts/TextKeysAndLanguages.hpp>
 
 Screen1ViewBase::Screen1ViewBase() :
+    interaction1Counter(0),
     buttonCallback(this, &Screen1ViewBase::buttonCallbackHandler)
 {
 
@@ -14,21 +15,28 @@ Screen1ViewBase::Screen1ViewBase() :
     __background.setColor(touchgfx::Color::getColorFrom24BitRGB(0, 0, 0));
 
     box1.setPosition(0, 0, 1024, 600);
-    box1.setColor(touchgfx::Color::getColorFrom24BitRGB(63, 60, 207));
+    box1.setColor(touchgfx::Color::getColorFrom24BitRGB(33, 29, 199));
 
     button1.setXY(427, 240);
     button1.setBitmaps(touchgfx::Bitmap(BITMAP_DARK_BUTTONS_ROUND_SMALL_ID), touchgfx::Bitmap(BITMAP_DARK_BUTTONS_ROUND_SMALL_PRESSED_ID));
     button1.setAction(buttonCallback);
 
     textArea1.setXY(371, 42);
-    textArea1.setColor(touchgfx::Color::getColorFrom24BitRGB(141, 207, 52));
+    textArea1.setColor(touchgfx::Color::getColorFrom24BitRGB(18, 20, 15));
     textArea1.setLinespacing(0);
     textArea1.setTypedText(touchgfx::TypedText(T_SINGLEUSEID1));
+
+    textArea2.setXY(0, 551);
+    textArea2.setColor(touchgfx::Color::getColorFrom24BitRGB(0, 0, 0));
+    textArea2.setLinespacing(0);
+    textArea2.setAlpha(240);
+    textArea2.setTypedText(touchgfx::TypedText(T_SINGLEUSEID2));
 
     add(__background);
     add(box1);
     add(button1);
     add(textArea1);
+    add(textArea2);
 }
 
 void Screen1ViewBase::setupScreen()
@@ -36,13 +44,38 @@ void Screen1ViewBase::setupScreen()
 
 }
 
+//Handles delays
+void Screen1ViewBase::handleTickEvent()
+{
+    if(interaction1Counter > 0)
+    {
+        interaction1Counter--;
+        if(interaction1Counter == 0)
+        {
+            //Interaction2
+            //When Interaction1 completed change screen to Screen2
+            //Go to Screen2 with screen transition towards East
+            application().gotoScreen2ScreenSlideTransitionEast();
+        }
+    }
+}
+
+//Called when the screen is done with transition/load
+void Screen1ViewBase::afterTransition()
+{
+    //Interaction1
+    //When screen is entered delay
+    //Delay for 5000 ms (300 Ticks)
+    interaction1Counter = INTERACTION1_DURATION;
+}
+
 void Screen1ViewBase::buttonCallbackHandler(const touchgfx::AbstractButton& src)
 {
     if (&src == &button1)
     {
-        //Interaction1
+        //Interaction3
         //When button1 clicked change screen to screen
-        //Go to screen with no screen transition
-        application().gotoscreenScreenNoTransition();
+        //Go to screen with screen transition towards West
+        application().gotoscreenScreenWipeTransitionWest();
     }
 }

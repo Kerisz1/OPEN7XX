@@ -7,7 +7,6 @@
 
 screenViewBase::screenViewBase() :
     interaction2Counter(0),
-    interaction4Counter(0),
     buttonCallback(this, &screenViewBase::buttonCallbackHandler)
 {
 
@@ -43,22 +42,6 @@ void screenViewBase::handleTickEvent()
             //When Interaction2 completed change screen to Screen1
             //Go to Screen1 with screen transition towards North
             application().gotoScreen1ScreenSlideTransitionNorth();
-
-            //Interaction4
-            //When Interaction3 completed delay
-            //Delay for 5000 ms (300 Ticks)
-            interaction4Counter = INTERACTION4_DURATION;
-        }
-    }
-    if(interaction4Counter > 0)
-    {
-        interaction4Counter--;
-        if(interaction4Counter == 0)
-        {
-            //Interaction5
-            //When Interaction4 completed change screen to screen
-            //Go to screen with screen transition towards North
-            application().gotoscreenScreenSlideTransitionNorth();
         }
     }
 }

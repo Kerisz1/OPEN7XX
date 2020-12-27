@@ -4,6 +4,7 @@
 #include <gui_generated/screen2_screen/Screen2ViewBase.hpp>
 #include <touchgfx/Color.hpp>
 #include "BitmapDatabase.hpp"
+#include <texts/TextKeysAndLanguages.hpp>
 
 Screen2ViewBase::Screen2ViewBase() :
     interaction1Counter(0)
@@ -15,8 +16,14 @@ Screen2ViewBase::Screen2ViewBase() :
     image1.setXY(0, 0);
     image1.setBitmap(touchgfx::Bitmap(BITMAP_IMAGE2_ID));
 
+    textArea1.setXY(40, 48);
+    textArea1.setColor(touchgfx::Color::getColorFrom24BitRGB(35, 41, 227));
+    textArea1.setLinespacing(0);
+    textArea1.setTypedText(touchgfx::TypedText(T_SINGLEUSEID3));
+
     add(__background);
     add(image1);
+    add(textArea1);
 }
 
 void Screen2ViewBase::setupScreen()
